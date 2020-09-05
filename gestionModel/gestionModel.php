@@ -29,11 +29,13 @@ class GestionModel{
         $attr.="'$ColumnName[$i]',\n\t";
         }
         $attr.="];";
-    $pri=$this->dao->getPrimaryKey($table);
+    $pri=$this->dao->getTableInfo($table);
     $pr='';
 
     foreach ($pri as $value) {
-        $pr.='protected $primaryKey = \''.$value.'\';';
+        if ($value['Key']=='PRI') {
+        $pr.='protected $primaryKey = \''.$value['Field'].'\';';
+        }
     }
     $model="<?php\n\n namespace App;\n\nuse Illuminate\Database\Eloquent\Model;\n
 

@@ -26,16 +26,10 @@ class DAO{
     return $ColumnName;
     }
 
-    public function getPrimaryKey($table)
+    public function getTableInfo($table)
     {
         $stmt=$this->pdo->prepare("show columns from $table");
         $stmt->execute();
-        $tab=array();
-        foreach ($stmt->fetchAll() as  $value) {
-            if ($value['Key']=='PRI') {
-            $tab[]=$value['Field'];
-            }
-        }
-    return $tab;
+        return $stmt->fetchAll();
     }
 }
