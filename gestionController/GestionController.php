@@ -37,13 +37,19 @@ class GestionController {
         //Making an array containing all the possible route for A CRUD APP
         $routes_arr = array();
         //appending Routes to the array
-        array_push($routes_arr, "Route::get('/".$pluralTableName."', '".$singularUcfTableName."Controller@index');");
-        array_push($routes_arr, "Route::get('/".$pluralTableName."/create', '".$singularUcfTableName."Controller@create');");
-        array_push($routes_arr, "Route::post('/".$pluralTableName."', '".$singularUcfTableName."Controller@store');");
-        array_push($routes_arr, "Route::get('/".$pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@show');");
-        array_push($routes_arr, "Route::get('/".$pluralTableName."/{".$singularTableName."}/edit', '".$singularUcfTableName."Controller@edit');");
-        array_push($routes_arr, "Route::patch('/".$pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@update');");
-        array_push($routes_arr, "Route::delete('/".$pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@destroy');");
+        array_push($routes_arr, "Route::get('/".$this->pluralTableName."', '".$singularUcfTableName."Controller@index');");
+        array_push($routes_arr, "Route::get('/".$this->pluralTableName."/create', '".$singularUcfTableName."Controller@create');");
+        array_push($routes_arr, "Route::post('/".$this->pluralTableName."', '".$singularUcfTableName."Controller@store');");
+        array_push($routes_arr, "Route::get('/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@show');");
+        array_push($routes_arr, "Route::get('/".$this->pluralTableName."/{".$singularTableName."}/edit', '".$singularUcfTableName."Controller@edit');");
+        array_push($routes_arr, "Route::patch('/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@update');");
+        array_push($routes_arr, "Route::delete('/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@destroy');");
+
+        array_push($routes_arr, "Route::get('/api/".$this->pluralTableName."/{limit}', '".$singularUcfTableName."Controller@restIndex');");
+        array_push($routes_arr, "Route::get('/api/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@restShow');");
+        array_push($routes_arr, "Route::post('/api/".$this->pluralTableName."', '".$singularUcfTableName."Controller@restStore');");
+        array_push($routes_arr, "Route::patch('/api/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@restUpdate');");
+        array_push($routes_arr, "Route::delete('/api/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@restDestroy');");
 
         /*test print*/
         foreach($routes_arr as $route){
@@ -57,10 +63,11 @@ class GestionController {
     function createRouteFile()
     {
         //opening the route file name in Laravel -> 'web.php'
-        $file = fopen($this->filePath."web.php", "a");
+        $file = fopen($this->filePath."web.php", "w");
         //Creating an array of lines to append in the file
         $lines = $this->makeRoutes($this->pluralTableName);
         //lopping on the file and appending
+        fwrite($file, "<?php\n");
         foreach($lines as $line){
             fwrite($file, $line."\n");
         }
@@ -151,6 +158,36 @@ class $singularUcfTableName"."Controller extends Controller
 
 
     ".$validationDataString."
+
+
+    //----------------------------------------Rest Controllers----------------------
+    
+    public function restIndex(\$limit = 0)
+    {
+        return $singularUcfTableName::limit(99)->offset(\$limit)->get();
+    }
+
+    public function restStore()
+    {
+        return $singularUcfTableName::create(".'$this->validateData()'.");
+    }
+
+    //Route Model Binding => \App\Customer \$var
+    public function restShow($singularUcfTableName \$$singularTableName)
+    {
+        return \$$singularTableName;
+    }
+
+    
+    public function restUpdate($singularUcfTableName \$$singularTableName)
+    {
+        return \$$singularTableName"."->update(".'$this->validateData()'.");
+    }
+
+    public function RestDestroy($singularUcfTableName \$$singularTableName)
+    {
+        return \$$singularTableName"."->delete();
+    }
 }
         ";
 
