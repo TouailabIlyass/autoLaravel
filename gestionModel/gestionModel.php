@@ -21,18 +21,16 @@ class GestionModel{
     {
             
     $modelname = ucfirst(substr($table,0,strlen($table)-1));
-    $ColumnName=$this->dao->getColumn($table);
+    $columns=$this->dao->getTableInfos($table);
 
         $attr='protected $fillable = ['."\n\t";
-        for($i=0;$i<count($ColumnName);$i++)
+        foreach($columns as $columnName)
         {
-        $attr.="'$ColumnName[$i]',\n\t";
+            $attr.="'{$columnName['Field']}',\n\t";
         }
         $attr.="];";
-    $pri=$this->dao->getTableInfo($table);
     $pr='';
-
-    foreach ($pri as $value) {
+    foreach ($columns as $value) {
         if ($value['Key']=='PRI') {
         $pr.='protected $primaryKey = \''.$value['Field'].'\';';
         }

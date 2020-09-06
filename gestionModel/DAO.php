@@ -12,24 +12,18 @@ class DAO{
         $this->pdo=ConnectionDB::getConnectionDB($db);
     }
 
-    public function getColumn($table):array
+    public function getTableInfos($table, $filtre=false)
     {
-        $stmt=$this->pdo->prepare("select * from $table");
+        $stmt=$this->pdo->prepare("show columns from $table where Field not in ('created_at' , 'updated_at' , 'deleted_at')");
         $stmt->execute();
-        
-        $ColumnName=array();
-
-        for($i=0;$i<$stmt->columnCount();$i++)
-        { if( $stmt->getColumnMeta($i)['name']!='created_at' && $stmt->getColumnMeta($i)['name']!='updated_at' && $stmt->getColumnMeta($i)['name']!='deleted_at')
-            $ColumnName[]=$stmt->getColumnMeta($i)['name'];
+        if($filtre === true)
+            return $stmt->fetchAll();
+        $array = [];
+        foreach($stmt->fetchAll() as $item)
+        {
+            if(strtolower($item['Extra']) === 'auto_increment') continue;
+            $array[] = $item;
         }
-    return $ColumnName;
-    }
-
-    public function getTableInfo($table)
-    {
-        $stmt=$this->pdo->prepare("show columns from $table");
-        $stmt->execute();
-        return $stmt->fetchAll();
+        return $array;
     }
 }

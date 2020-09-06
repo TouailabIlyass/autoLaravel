@@ -14,7 +14,7 @@ class GestionForm{
         $this->dao = new DAO($dbname);
     }
     private function createFieldName($fieldname)
-    {   $str='';
+    {   $str ='';
         if (!ctype_lower($fieldname) || strpos($fieldname,'_')) {
             $len = strlen($fieldname);
             for($i = 0; $i < $len ; $i++)
@@ -29,17 +29,31 @@ class GestionForm{
         }
         else return $fieldname;
     }
+    private function createInputType($fieldname)
+    {
+        if (strpos($fieldname, 'email') !== false)
+            return 'email';
+        else if (strpos($fieldname, 'password') !== false)
+            return 'password';
+        else if (strpos($fieldname, 'age') !== false)
+            return 'number';
+        else if (strpos($fieldname, 'telephone') !== false)
+            return 'number';
+        else if (strpos($fieldname, 'date') !== false)
+            return 'date';
+        return 'text';
+    }
     public function createForm($table)
     {
         $form = '';
         $modelname =  substr($table,0,strlen($table)-1); 
-        $ColumnName=$this->dao->getColumn($table);
-        foreach ($ColumnName as $field) {
+        $columns=$this->dao->getTableInfos($table);
+        foreach ($columns as $field) {
             $form.='<div class="form-group row">
-            <label for="'.$field.'" class="col-sm-2 col-form-label">'.$this->createFieldName($field).'</label>
+            <label for="'.$field['Field'].'" class="col-sm-2 col-form-label">'.$this->createFieldName($field['Field']).'</label>
             <div class="col-sm-10">
-            <input type="text"  class="form-control" id="'.$field.'" name="'.$field.'"  value="{{old(\''.$field.'\') ??  $'. $modelname.'->'.$field.'}}">
-            @error(\''.$field.'\') <p style="color:red;"> {{$message}}</p>@enderror
+            <input type="'.$this->createInputType($field['Field']).'"  class="form-control" id="'.$field['Field'].'" name="'.$field['Field'].'"  value="{{old(\''.$field['Field'].'\') ??  $'. $modelname.'->'.$field['Field'].'}}">
+            @error(\''.$field['Field'].'\') <p style="color:red;"> {{$message}}</p>@enderror
             </div>
         </div>
         '."\n\n";
