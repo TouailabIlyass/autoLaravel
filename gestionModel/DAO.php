@@ -6,9 +6,11 @@ class DAO{
 
 
     private $pdo = NULL;
+    private $dbname = NULL;
 
     public function __construct($db)
     {
+        $this->dbname = $db;
         $this->pdo=ConnectionDB::getConnectionDB($db);
     }
 
@@ -25,5 +27,11 @@ class DAO{
             $array[] = $item;
         }
         return $array;
+    }
+    public function getTablesNames()
+    {
+        $stmt=$this->pdo->prepare("SHOW tables from $this->dbname");
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }
