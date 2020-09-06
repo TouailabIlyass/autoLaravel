@@ -3,12 +3,12 @@
 class GestionController {
 
     private $pluralTableName;
-    private $tableAttributes = array();
+    private $dbname;
     private $filePath;
 
-    public function __construct($tn, $ta, $fp) {
+    public function __construct($tn, $dbn, $fp) {
         $this->pluralTableName = $tn;
-        $this->tableAttributes = $ta;
+        $this->dbname = $dbn;
         $this->filePath = $fp;
     }
 
@@ -45,17 +45,11 @@ class GestionController {
         array_push($routes_arr, "Route::patch('/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@update');");
         array_push($routes_arr, "Route::delete('/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@destroy');");
 
-        array_push($routes_arr, "Route::get('/api/".$this->pluralTableName."/{limit}', '".$singularUcfTableName."Controller@restIndex');");
+        array_push($routes_arr, "Route::get('/api/".$this->pluralTableName."/limit/{limit?}', '".$singularUcfTableName."Controller@restIndex');");
         array_push($routes_arr, "Route::get('/api/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@restShow');");
         array_push($routes_arr, "Route::post('/api/".$this->pluralTableName."', '".$singularUcfTableName."Controller@restStore');");
         array_push($routes_arr, "Route::patch('/api/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@restUpdate');");
         array_push($routes_arr, "Route::delete('/api/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@restDestroy');");
-
-        /*test print*/
-        foreach($routes_arr as $route){
-            echo ''.$route;
-            echo '<br>';
-        }
         
         return $routes_arr;
     }
@@ -75,18 +69,50 @@ class GestionController {
         fclose($file);
     }
 
-    function makingValidationFunctionString()
-    {
+    function generateValidation()
+    {   
+        //including dao module
+        include_once('../gestionModel/DAO.php');
+        //instantiation from the module
+        $dao_obj = new DAO($this->dbname);
+        //getting table infos => cols = ['Field', 'Type', 'Null', 'Key', 'Default', 'Extra']
+        //Notice: table name should be plural
+        $data = $dao_obj->getTableInfos($this->pluralTableName);
+        //validation function string header
         $str = "public function validateData()
-            {
-            \treturn request()->validate(["."\n";
-        
-        foreach($this->tableAttributes as $ta)
+    {
+        return request()->validate([";
+        //looping on data table
+        foreach($data as $row)
         {
-            $str .= "\t\t\t\t'$ta'"."=> 'required',\n";
+            // concat : example 'name' => '
+            $str .= "\n\t\t\t'{$row['Field']}' => '";
+            //testing if the attribut is AUTO_INCREMENT
+            if(strtolower($row['Extra']) == 'auto_increment')
+            {
+                //concat: example ,
+                $str .= "',\n";
+                continue;
+            }
+            //testing if the attribut is Nullable or not
+            if(strtolower($row['Null']) == 'no'){
+                //concat
+                $str .= "required|";
+            }
+            //taking the max lenght from the type 
+            //example => VARCHAR(100) -> 100
+            if (strpos(strtolower($row['Type']), 'varchar') !== false) {
+                $split_lenght = explode("(", $row['Type']);
+                $split_lenght = explode(")",$split_lenght[1]);
+                $split_lenght = $split_lenght[0];
+                //concat example : max
+                $str .= "max:$split_lenght|";
+            }
+            //concat: example ,
+            $str .= "',\n";
         }
 
-        $str .= "\t\t\t]);\n\t\t}";
+        $str .= "\t\t]);\n }";
 
         return $str;
     }
@@ -100,7 +126,7 @@ class GestionController {
         
         //geting the validation string for the table attributes
         //to add them to controlers functions
-        $validationDataString = $this->makingValidationFunctionString($this->tableAttributes);
+        $validationDataString = $this->generateValidation();
         
         //file content
         $fileContent = "<?php
