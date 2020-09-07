@@ -45,6 +45,7 @@ class GestionController {
         array_push($routes_arr, "Route::patch('/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@update');");
         array_push($routes_arr, "Route::delete('/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@destroy');");
 
+        array_push($routes_arr, "\t//----------------Rest for $this->pluralTableName Table-----------------------");
         array_push($routes_arr, "Route::get('/api/".$this->pluralTableName."/limit/{limit?}', '".$singularUcfTableName."Controller@restIndex');");
         array_push($routes_arr, "Route::get('/api/".$this->pluralTableName."/{".$singularTableName."}', '".$singularUcfTableName."Controller@restShow');");
         array_push($routes_arr, "Route::post('/api/".$this->pluralTableName."', '".$singularUcfTableName."Controller@restStore');");
@@ -57,14 +58,16 @@ class GestionController {
     function createRouteFile()
     {
         //opening the route file name in Laravel -> 'web.php'
-        $file = fopen($this->filePath."web.php", "w");
+        $file = fopen($this->filePath."\\routes\web.php", "a");
         //Creating an array of lines to append in the file
         $lines = $this->makeRoutes($this->pluralTableName);
         //lopping on the file and appending
-        fwrite($file, "<?php\n");
+        $str =  "\n\n\n//-------------------$this->pluralTableName Routes---------------\n";
         foreach($lines as $line){
-            fwrite($file, $line."\n");
+            $str .= "$line\n";
         }
+        $str .=  "//-------------------End $this->pluralTableName Routes------------";
+        fwrite($file, $str);
         //closing the file
         fclose($file);
     }
@@ -218,7 +221,7 @@ class $singularUcfTableName"."Controller extends Controller
         ";
 
         //opening the route file name in Laravel -> 'web.php'
-        $file = fopen($this->filePath.$singularUcfTableName."Controller.php", "w");
+        $file = fopen($this->filePath."/app/Http/Controllers/".$singularUcfTableName."Controller.php", "w");
         //writing the content the content
         fwrite($file, $fileContent);
         //closing the file
