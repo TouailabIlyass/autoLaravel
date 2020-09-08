@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>Auto Laravel App</title>
+</head>
+<body>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col col-2"></div>
+        <div class="col col-8">
+            <div class="card">
+                <div class="card-header">
+                    <center><h1>Auto Laravel</h1></center>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="generateProject.php">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Database Name</label>
+                            <input type="text" class="form-control" name="dbname" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+                            <small id="emailHelp" class="form-text text-muted">Insert the database Name that you want to work with!</small>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label for="exampleFormControlFile1">Example file input</label>
+                            <input type="text" class="form-control-file" name="filepath" id="exampleFormControlFile1" required />
+                            <small id="emailHelp" class="form-text text-muted">Browse the laravel project that you just creates!</small>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-success">Generate</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col col-2"></div>
+    </div>
+</body>
+</html>
