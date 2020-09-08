@@ -1,8 +1,15 @@
 <?php
 
 class ConnectionDB{
+
+        //pdo static var
         static $PDO = NULL;
 
+        /*
+        Input: take a database name as input
+        Role: create a connection to Mysql database
+        Output: None
+        */
         private static function Connection($dbname)
         {
                 try{
@@ -24,6 +31,12 @@ class ConnectionDB{
                 }
 
         }
+
+        /*
+        Input: take a database name as input
+        Role: return an connection instance
+        Output: cnx instance
+        */
         public static function getConnectionDB($dbname)
         {
                 if (self::$PDO == NULL)
