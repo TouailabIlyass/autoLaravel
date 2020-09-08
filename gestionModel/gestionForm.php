@@ -1,17 +1,15 @@
 <?php
 include_once 'DAO.php';
 
-$gform = new GestionForm('gestion_location_voitures');
-$gform->createForm('clients');
-echo 'fin form';
-
 class GestionForm{
 
     private $dao = NULL;
+    private $filePath = NULL;
     
-    public function __construct($dbname)
+    public function __construct($dbname, $filePath)
     {
         $this->dao = new DAO($dbname);
+        $this->filePath = $filePath;
     }
     private function createFieldName($fieldname)
     {   $str ='';
@@ -46,7 +44,10 @@ class GestionForm{
     public function createForm($table)
     {
         $form = '';
-        $modelname =  substr($table,0,strlen($table)-1); 
+        $tableHead = '';
+        $tableBody = '';
+        $primaryKey = '';
+        $modelname =  substr($table,0,strlen($table)-1);
         $columns=$this->dao->getTableInfos($table);
         foreach ($columns as $field) {
             $form.='<div class="form-group row">
@@ -57,9 +58,57 @@ class GestionForm{
             </div>
         </div>
         '."\n\n";
+        ////generate table for showing data
+        $tableHead.= "<th>{$field['Field']}</th>\n\t";
+        $tableBody .= "<td>{{\$$modelname->{$field['Field']}}}</td>\n\t";
+        if ($field['Key']=='PRI') {
+            $primaryKey = $field['Field'];
+            }
         }
         $form.="\t@csrf";
-        $f=fopen('form'.ucfirst($modelname).'.blade.php','w+');
+        if(!is_dir("$this->filePath./resources/views/$table"))
+            mkdir("$this->filePath./resources/views/$table");
+        $f=fopen("$this->filePath/resources/views/$table/form".ucfirst($modelname).'.blade.php','w+');
+        fputs($f,$form);
+        fclose($f);
+        /////writing table
+        $form = "
+        <a href=\"{{url('$table/create')}}\" >Add</a>
+        <table>
+            <thead>
+            $tableHead
+            <th>Action</th>
+            </thead>
+            <tbody>
+            @foreach(\$$table as \$$modelname)
+                <tr>
+                $tableBody
+                <td>
+                <form action=\"{{url('clients/'.\${$modelname}->{$primaryKey})}}\" method=\"POST\">
+                    <a href=\"\">Update</a>
+                    {{method_field('delete')}}
+                @csrf
+                <button type=\"submit\">Delete</button>
+                </form>
+            </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+        ";
+        $f=fopen("$this->filePath/resources/views/$table/index.blade.php",'w+');
+        fputs($f,$form);
+        fclose($f);
+        ////////// writing create file
+        $form = "
+        <div>
+        <form action=\"{{url('$table')}}\" method=\"POST\">
+            @include('$table.formClient')
+            <button type=\"submit\" >Add</button>
+        </form>
+        </div>
+";
+        $f=fopen("$this->filePath/resources/views/$table/create.blade.php",'w+');
         fputs($f,$form);
         fclose($f);
     }
