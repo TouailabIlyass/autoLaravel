@@ -127,7 +127,7 @@ class GestionController {
         
         //geting the validation string for the table attributes
         //to add them to controlers functions
-        $validationDataString = $this->generateValidation();
+        $validationDataString = $this->generateValidation($tableName);
         
         //file content
         $fileContent = "<?php

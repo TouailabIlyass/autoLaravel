@@ -27,7 +27,7 @@ foreach($tablesNames as $tablename){
     $obj->createController($tablename["Tables_in_$dbname"]);
     $obj->createRouteFile($tablename["Tables_in_$dbname"]);
     $objModel->createModel($tablename["Tables_in_$dbname"]);
-    $objForm->createForm($tablename["Tables_in_$dbname"]);
+    $objForm->createFormWithVueJS($tablename["Tables_in_$dbname"]);
 }
 
 echo "done!";

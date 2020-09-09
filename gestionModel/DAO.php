@@ -23,7 +23,7 @@ class DAO{
         $array = [];
         foreach($stmt->fetchAll() as $item)
         {
-            if(strtolower($item['Extra']) === 'auto_increment') continue;
+            if((strtolower($item['Extra']) == 'auto_increment' && strtolower($item['Key'])!= 'pri')) continue;
             $array[] = $item;
         }
         return $array;
