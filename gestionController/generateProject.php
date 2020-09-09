@@ -1,35 +1,44 @@
 <?php
 
-//header('Content-Type: application/json');
-
-
+//including the controller generator
 include_once('./GestionController.php');
-//including dao module
+//including dao module generator
 include_once('../gestionModel/DAO.php');
 include_once('../gestionModel/gestionModel.php');
 include_once('../gestionModel/gestionForm.php');
-//instantiation from the module
 
+
+//getting the database Name and the file name
 $dbname = $_POST['dbname'];
 $filepath = $_POST['filepath'];
 
+//ploting request infos
+echo "<h4>The database name is : $dbname </h4><br>";
+echo "<h4>The database name is : $filepath </h4><br>";
 
-echo "$dbname<br>";
-echo "$filepath<br>";
 
-
+//dao instantiation
 $dao_obj = new DAO($dbname);
+//getting table names
 $tablesNames = $dao_obj->getTablesNames();
+//instantiating needed Classes
 $objModel = new GestionModel($dbname, $filepath);
 $objForm =  new GestionForm($dbname, $filepath);
-$obj = new GestionController($dbname, $filepath);
+$objControl = new GestionController($dbname, $filepath);
+
+//looping trought tables in database
 foreach($tablesNames as $tablename){
-    $obj->createController($tablename["Tables_in_$dbname"]);
-    $obj->createRouteFile($tablename["Tables_in_$dbname"]);
+    //creating table controller files
+    $objControl->createController($tablename["Tables_in_$dbname"]);
+    //creating table Route files
+    $objControl->createRouteFile($tablename["Tables_in_$dbname"]);
+    //creating table Model files
     $objModel->createModel($tablename["Tables_in_$dbname"]);
     $objForm->createFormWithVueJS($tablename["Tables_in_$dbname"]);
+
 }
 
-echo "done!";
+//Success !
+echo "<h1>Done successfully!</h1>";
 
 ?>

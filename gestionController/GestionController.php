@@ -5,11 +5,17 @@ class GestionController {
     private $dbname;
     private $filePath;
 
+    //Class Constructor
     public function __construct($dbn, $fp) {
         $this->dbname = $dbn;
         $this->filePath = $fp;
     }
 
+    /*
+    Input: take a table name as input
+    Role: making different tableName string forms => 'Table', 'table'
+    Output: return an array of string as 'Table', 'table'
+    */
     function makeTableNameStrings($tableName)
     {
         //Removing the 's' from the table name to make it singular => 'table'
@@ -26,6 +32,11 @@ class GestionController {
         return $arr;
     }
 
+    /*
+    Input: take a ble name as input
+    Role: Making CRUD routes related to the view and REST API CRUD
+    Output: an array of routes
+    */
     function makeRoutes($tableName)
     {
         $arr = $this->makeTableNameStrings($tableName);
@@ -53,6 +64,11 @@ class GestionController {
         return $routes_arr;
     }
 
+    /*
+    Input: take a table name as input
+    Role: genrate the routes in the web.php file
+    Output: None
+    */
     function createRouteFile($tableName)
     {
         //opening the route file name in Laravel -> 'web.php'
@@ -70,6 +86,11 @@ class GestionController {
         fclose($file);
     }
 
+    /*
+    Input: take a table name as input
+    Role: generate the validation Function using conditions (required|max|...)
+    Output: return a validation Function as String
+    */
     function generateValidation($tableName)
     {   
         //including dao module
@@ -118,6 +139,11 @@ class GestionController {
         return $str;
     }
 
+    /*
+    Input: take a table name as input
+    Role: Create Controllers in the specefic laravel folders
+    Output: None
+    */
     function createController($tableName)
     {
         //getting the AllString 'table', 'Table'

@@ -3,14 +3,22 @@ include_once 'DAO.php';
 
 class GestionForm{
 
+    //Class Vars
     private $dao = NULL;
     private $filePath = NULL;
     
+    //Class Constructor
     public function __construct($dbname, $filePath)
     {
         $this->dao = new DAO($dbname);
         $this->filePath = $filePath;
     }
+
+    /*
+    Input: take a fieldname (table attribute) as input
+    Role: create a label for the input 
+    Output: return the label as string
+    */
     private function createFieldName($fieldname)
     {   $str ='';
         if (!ctype_lower($fieldname) || strpos($fieldname,'_')) {
@@ -27,6 +35,12 @@ class GestionForm{
         }
         else return $fieldname;
     }
+
+    /*
+    Input: take a fieldname (table attribute) as input
+    Role: Create a input type regarding the attribut type like Email , phone, text, password
+    Output: return the input type as string
+    */
     private function createInputType($fieldname)
     {
         if (strpos($fieldname, 'email') !== false)
@@ -41,6 +55,12 @@ class GestionForm{
             return 'date';
         return 'text';
     }
+
+    /*
+    Input: take a tablename as input
+    Role: Create a form for the table
+    Output: None
+    */
     public function createForm($table)
     {
         $form = '';
