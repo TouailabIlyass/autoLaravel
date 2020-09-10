@@ -33,6 +33,9 @@ class GestionModel{
             $attr.="'{$columnName['Field']}',\n\t";
             if ($columnName['Key']=='PRI') {
                 $pr.='protected $primaryKey = \''.$columnName['Field'].'\';';
+                    if (strpos($columnName['Type'], 'varchar') !== false) {
+                        $pr.="\npublic \$incrementing = false;";
+                    }
                 }
         }
         $attr.="];";

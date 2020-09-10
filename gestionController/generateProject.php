@@ -27,6 +27,7 @@ $objForm =  new GestionForm($dbname, $filepath);
 $objControl = new GestionController($dbname, $filepath);
 
 //looping trought tables in database
+/*
 foreach($tablesNames as $tablename){
     //creating table controller files
     $objControl->createController($tablename["Tables_in_$dbname"]);
@@ -36,7 +37,13 @@ foreach($tablesNames as $tablename){
     $objModel->createModel($tablename["Tables_in_$dbname"]);
     $objForm->createFormWithVueJS($tablename["Tables_in_$dbname"]);
 
-}
+}*/
+$objControl->createController('vehicules');
+    //creating table Route files
+    $objControl->createRouteFile('vehicules');
+    //creating table Model files
+    $objModel->createModel('vehicules');
+//$objForm->createFormWithVueJS('vehicules');
 
 //Success !
 echo "<h1>Done successfully!</h1>";

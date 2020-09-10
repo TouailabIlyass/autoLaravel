@@ -259,8 +259,8 @@ class GestionForm{
                                 <button type="submit" class="btn btn-primary btn-lg">Recherch</button>
                             </div>
                             <div class="col-md-4 widget-right">
-                                <button  class="btn btn-success btn-lg pull-right"  data-toggle="modal" data-target="#CreateNewProduct">
-                                <em class="fa fa-plus"></em> Cree Un Client</button>
+                            <button type="button" class="btn btn-success btn-lg pull-right"  data-toggle="modal" data-target="#CreateNewProduct">
+                            <em class="fa fa-plus"></em> Cree Un Client</button>
                             </div>
                         </div>
                         
